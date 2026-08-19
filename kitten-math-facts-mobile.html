@@ -964,17 +964,26 @@
     return svgWrap(starTwinkle() + '<g class="rocket-bob">' + rocketBody("😺") + '</g>');
   }
   // Laser: asteroid flies in from far right, stops at a clear distance, ship blasts it and it explodes.
+  // The beam fires around 0.9s in (see LASER_FIRE_MS) — keep the sound in sync with that.
   function rocketLaser() {
     var ast = asteroidGroup(
       '<animateTransform attributeName="transform" type="translate" values="214 100;172 100;172 100" keyTimes="0;0.4;1" dur="2s" fill="freeze"/>',
       "1.2s",
-      '<animate attributeName="opacity" values="1;1;0" keyTimes="0;0.5;0.62" dur="2s" fill="freeze"/>');
+      '<animate attributeName="opacity" values="1;1;0" keyTimes="0;0.55;0.66" dur="2s" fill="freeze"/>');
+    // Beam is two stacked bars: a thick pink glow with a bright white core. Fires ~0.9s, lingers ~0.7s.
+    var beamKeys = 'keyTimes="0;0.42;0.5;0.72;0.8"';
+    var glow = '<rect x="132" y="93" height="14" rx="7" fill="#ff3b6b" opacity="0">' +
+      '<animate attributeName="width" values="0;0;46;46;0" ' + beamKeys + ' dur="2s" fill="freeze"/>' +
+      '<animate attributeName="opacity" values="0;0;0.9;0.9;0" ' + beamKeys + ' dur="2s" fill="freeze"/></rect>';
+    var core = '<rect x="132" y="97" height="6" rx="3" fill="#fff2f6" opacity="0">' +
+      '<animate attributeName="width" values="0;0;46;46;0" ' + beamKeys + ' dur="2s" fill="freeze"/>' +
+      '<animate attributeName="opacity" values="0;0;1;1;0" ' + beamKeys + ' dur="2s" fill="freeze"/></rect>';
     return svgWrap(starTwinkle() +
       '<g class="rocket-bob">' + rocketBody("😼") + '</g>' +
-      ast +
-      '<rect x="136" y="97" height="6" rx="3" fill="#ff3b6b"><animate attributeName="width" values="0;0;36;36;0" keyTimes="0;0.4;0.48;0.6;0.72" dur="2s" fill="freeze"/></rect>' +
-      '<text x="172" y="111" font-size="34" text-anchor="middle" opacity="0">💥<animate attributeName="opacity" values="0;0;1;1;0.9" keyTimes="0;0.52;0.62;0.9;1" dur="2s" fill="freeze"/></text>');
+      ast + glow + core +
+      '<text x="172" y="112" font-size="36" text-anchor="middle" opacity="0">💥<animate attributeName="opacity" values="0;0;1;1;0.9" keyTimes="0;0.56;0.66;0.9;1" dur="2s" fill="freeze"/></text>');
   }
+  var LASER_FIRE_MS = 900; // when the beam visually fires — used to time the laser sound
   // Dodge: asteroid crosses at ship height; ship drops well out of the way, then comes back.
   function rocketDodge() {
     var ast = asteroidGroup(
@@ -1181,7 +1190,7 @@
         var useLaser = Math.random() < 0.5;
         stageEl.innerHTML = useLaser ? rocketLaser() : rocketDodge();
         chimeCorrect();
-        if (useLaser) sfxLaser();
+        if (useLaser) setTimeout(sfxLaser, LASER_FIRE_MS); // sync the pew with the visible beam
         messageEl.textContent = useLaser ? "💥 Asteroid destroyed!" : "🚀 Nice dodge!";
       } else {
         stageEl.innerHTML = celebrate();
