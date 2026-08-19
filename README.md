@@ -13,13 +13,11 @@ step, no server, and no internet connection required.** Double-click and play.
 
 ## 🚀 Getting started
 
-Just open one of the HTML files in any modern browser (double-click it, or drag it
-onto a browser window).
+Open **`kitten-math-facts-mobile.html`** in any modern browser — double-click it,
+or drag it onto a browser window. That's the whole app.
 
-| File | Best for | What's inside |
-| --- | --- | --- |
-| **`kitten-math-facts-mobile.html`** | **Phones, tablets, and everyday use (recommended)** | The full-featured version — on-screen number pad, all five modes, settings, timed mode, history & stats, and surprise celebrations. Also works great on a desktop (the physical keyboard works too). |
-| `kitten-math-facts.html` | A simple keyboard-only desktop version | The original, pared-back version: addition / subtraction / mix, typed answers, happy & crying kitten. |
+It's designed for phones and tablets (big on-screen number pad), but works just as
+well on a desktop, where the physical keyboard works too.
 
 ### 📲 Install it like an app (iOS)
 
@@ -28,7 +26,7 @@ Screen**. It launches full-screen like a native app.
 
 ---
 
-## ✨ Features (mobile version)
+## ✨ Features
 
 ### Practice modes
 - **➕ Add** and **➖ Sub** — answers capped at a configurable maximum (default 20).
@@ -67,7 +65,7 @@ Screen**. It launches full-screen like a native app.
 
 ---
 
-## ⚙️ Settings reference (mobile version)
+## ⚙️ Settings reference
 
 Open with the **⚙️** button (top-right).
 
@@ -97,8 +95,7 @@ Open with the **⚙️** button (top-right).
 
 ## 📦 Repository
 
-- `kitten-math-facts-mobile.html` — full-featured version
-- `kitten-math-facts.html` — original simple desktop version
+- `kitten-math-facts-mobile.html` — the app (single self-contained file)
 - `README.md` — this file
 - `LICENSE` — MIT License
 
