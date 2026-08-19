@@ -9,11 +9,13 @@ Everything lives in a single HTML file: the kitten is drawn as inline SVG and th
 sounds are synthesized in the browser, so there are **no external files, no build
 step, no server, and no internet connection required.** Double-click and play.
 
+**▶️ Play it online: https://admin-rte.github.io/kitten-math-facts/**
+
 ---
 
 ## 🚀 Getting started
 
-Open **`kitten-math-facts-mobile.html`** in any modern browser — double-click it,
+Open **`index.html`** in any modern browser — double-click it,
 or drag it onto a browser window. That's the whole app.
 
 It's designed for phones and tablets (big on-screen number pad), but works just as
@@ -21,7 +23,7 @@ well on a desktop, where the physical keyboard works too.
 
 ### 📲 Install it like an app (iOS)
 
-Open `kitten-math-facts-mobile.html` in Safari, then tap **Share → Add to Home
+Open `index.html` in Safari, then tap **Share → Add to Home
 Screen**. It launches full-screen like a native app.
 
 ---
@@ -110,7 +112,7 @@ Open with the **⚙️** button (top-right).
 
 ## 📦 Repository
 
-- `kitten-math-facts-mobile.html` — the app (single self-contained file)
+- `index.html` — the app (single self-contained file)
 - `README.md` — this file
 - `LICENSE` — MIT License
 
