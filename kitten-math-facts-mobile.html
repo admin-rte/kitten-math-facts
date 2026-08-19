@@ -339,6 +339,7 @@
   .overlay.open { display: flex; }
   .sheet {
     background: #fff;
+    color: var(--ink);   /* keep modal text dark on the white sheet in every theme */
     border-radius: 24px;
     width: min(420px, 100%);
     max-height: 90vh;
@@ -1147,15 +1148,37 @@
   function timeUp() {
     if (resolved) return;
     resolved = true;
-    awaitingNext = true;
-    showKitten("sad");
-    buzzWrong();
-    answerEl.textContent = current.answer;
-    answerEl.classList.remove("empty");
-    answerEl.classList.add("reveal");
-    messageEl.textContent = "⏰ Time's up! Press Enter for the next problem";
-    messageEl.className = "message wrong";
     addHistory("timeout", null, null);
+    if (spaceMode) {
+      // Running out of time = an asteroid crash (costs a heart), like a wrong answer.
+      lives--;
+      renderHearts();
+      stageEl.innerHTML = rocketHit();
+      if (lives <= 0) {
+        gameOver = true;
+        setTimeout(function () { stageEl.innerHTML = rocketDefeat(); sfxDefeat(); }, 1100);
+        messageEl.textContent = "💥 Time's up! Out of hearts.";
+        messageEl.className = "message wrong";
+        showTryAgain(true);
+      } else {
+        sfxHit();
+        awaitingNext = true;   // time ran out — reveal answer and move on with Enter
+        answerEl.textContent = current.answer;
+        answerEl.classList.remove("empty");
+        answerEl.classList.add("reveal");
+        messageEl.textContent = "💥 Crash! Time's up — press Enter to continue";
+        messageEl.className = "message wrong";
+      }
+    } else {
+      awaitingNext = true;
+      showKitten("sad");
+      buzzWrong();
+      answerEl.textContent = current.answer;
+      answerEl.classList.remove("empty");
+      answerEl.classList.add("reveal");
+      messageEl.textContent = "⏰ Time's up! Press Enter for the next problem";
+      messageEl.className = "message wrong";
+    }
   }
 
   // ---------- Input ----------
