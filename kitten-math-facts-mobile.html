@@ -37,24 +37,25 @@
     touch-action: manipulation;
   }
 
-  /* ---- Top bar: modes + gear ---- */
+  /* ---- Top bar: utility icons only ---- */
   .topbar {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 8px 4px;
+    padding: 8px 8px 2px;
     flex: 0 0 auto;
   }
+  #gearBtn { margin-left: auto; }   /* push settings to the far right */
+
+  /* ---- Mode selector: its own full-width row ---- */
   .modes {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 6px;
-    flex: 1 1 auto;
-    flex-wrap: wrap;
-    justify-content: center;
+    padding: 2px 8px 4px;
+    flex: 0 0 auto;
   }
   .mode-btn {
-    flex: 1 1 0;
-    min-width: 46px;
     border: 3px solid var(--pink);
     background: #fff;
     color: var(--pink-deep);
@@ -64,6 +65,8 @@
     padding: 9px 2px;
     border-radius: 999px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
   }
   .mode-btn.active {
     background: var(--pink);
@@ -514,14 +517,15 @@
   <div class="topbar">
     <button class="round" id="historyBtn" title="History" aria-label="History">📜</button>
     <button class="round" id="spaceBtn" title="Space mode" aria-label="Space mode">🚀</button>
-    <div class="modes" id="modes">
-      <button class="mode-btn active" data-mode="add">➕ Add</button>
-      <button class="mode-btn" data-mode="sub">➖ Sub</button>
-      <button class="mode-btn" data-mode="mix">🔀 Mix</button>
-      <button class="mode-btn" data-mode="mul">✖️ Mult</button>
-      <button class="mode-btn" data-mode="div">➗ Div</button>
-    </div>
     <button class="round" id="gearBtn" title="Settings" aria-label="Settings">⚙️</button>
+  </div>
+
+  <div class="modes" id="modes">
+    <button class="mode-btn active" data-mode="add">➕ Add</button>
+    <button class="mode-btn" data-mode="sub">➖ Sub</button>
+    <button class="mode-btn" data-mode="mix">🔀 Mix</button>
+    <button class="mode-btn" data-mode="mul">✖️ Mult</button>
+    <button class="mode-btn" data-mode="div">➗ Div</button>
   </div>
 
   <div class="timer" id="timer">
