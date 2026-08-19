@@ -970,15 +970,16 @@
     var ast = asteroidGroup(
       '<animateTransform attributeName="transform" type="translate" values="214 100;172 100;172 100" keyTimes="0;0.4;1" dur="2s" fill="freeze"/>',
       "1.2s",
-      '<animate attributeName="opacity" values="1;1;0" keyTimes="0;0.55;0.66" dur="2s" fill="freeze"/>');
+      '<animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.55;0.66;1" dur="2s" fill="freeze"/>');
     // Beam is two stacked bars: a thick pink glow with a bright white core. Fires ~0.9s, lingers ~0.7s.
-    var beamKeys = 'keyTimes="0;0.42;0.5;0.72;0.8"';
+    // NOTE: keyTimes MUST start at 0 and end at 1, or the whole animation is silently ignored.
+    var beamKeys = 'keyTimes="0;0.42;0.5;0.72;0.8;1"';
     var glow = '<rect x="132" y="93" height="14" rx="7" fill="#ff3b6b" opacity="0">' +
-      '<animate attributeName="width" values="0;0;46;46;0" ' + beamKeys + ' dur="2s" fill="freeze"/>' +
-      '<animate attributeName="opacity" values="0;0;0.9;0.9;0" ' + beamKeys + ' dur="2s" fill="freeze"/></rect>';
+      '<animate attributeName="width" values="0;0;46;46;0;0" ' + beamKeys + ' dur="2s" fill="freeze"/>' +
+      '<animate attributeName="opacity" values="0;0;0.9;0.9;0;0" ' + beamKeys + ' dur="2s" fill="freeze"/></rect>';
     var core = '<rect x="132" y="97" height="6" rx="3" fill="#fff2f6" opacity="0">' +
-      '<animate attributeName="width" values="0;0;46;46;0" ' + beamKeys + ' dur="2s" fill="freeze"/>' +
-      '<animate attributeName="opacity" values="0;0;1;1;0" ' + beamKeys + ' dur="2s" fill="freeze"/></rect>';
+      '<animate attributeName="width" values="0;0;46;46;0;0" ' + beamKeys + ' dur="2s" fill="freeze"/>' +
+      '<animate attributeName="opacity" values="0;0;1;1;0;0" ' + beamKeys + ' dur="2s" fill="freeze"/></rect>';
     return svgWrap(starTwinkle() +
       '<g class="rocket-bob">' + rocketBody("😼") + '</g>' +
       ast + glow + core +
