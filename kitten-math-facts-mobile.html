@@ -1228,8 +1228,10 @@
       messageEl.className = "message correct";
       setTimeout(function () { newProblem(false); }, spaceMode ? 2300 : 1400);
     } else {
-      // Wrong — logged as a response.
+      // Wrong — logged as a response. A mistake stops the clock so the retry isn't timed.
       tries++;
+      stopTimer();
+      showTimerUI(false);
       addHistory("wrong", val, Date.now() - problemShownAt);
       if (spaceMode) {
         lives--;
