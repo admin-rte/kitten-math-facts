@@ -434,11 +434,85 @@
   }
   .about .about-title { font-size: 15px; font-weight: bold; color: var(--pink-deep); opacity: 1; }
   .about a { color: var(--pink-deep); }
+
+  /* ---- Hearts (space mode) ---- */
+  .hearts { display: none; justify-content: center; gap: 6px; font-size: 22px; padding: 2px 0; flex: 0 0 auto; }
+  body.space .hearts { display: flex; }
+
+  /* ---- Try Again button (space game over) ---- */
+  .tryagain-btn {
+    display: none;
+    margin-top: 10px;
+    border: none;
+    background: var(--green);
+    color: #fff;
+    font: inherit;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px 26px;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--green-deep);
+    flex: 0 0 auto;
+  }
+  .tryagain-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-deep); }
+  .tryagain-btn.show { display: inline-block; }
+
+  /* ---- Space theme ---- */
+  body.space {
+    background: radial-gradient(circle at 50% 0%, #14203f 0%, #0a1024 60%, #05070f 100%);
+    color: #eaf2ff;
+  }
+  body.space::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      radial-gradient(1.5px 1.5px at 24px 34px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 130px 80px, #cfe3ff, transparent),
+      radial-gradient(1px 1px at 70px 150px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 170px 120px, #fff, transparent),
+      radial-gradient(1px 1px at 40px 190px, #bcd4ff, transparent),
+      radial-gradient(1.5px 1.5px at 190px 40px, #fff, transparent);
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    animation: starscroll 14s linear infinite;
+    opacity: 0.9;
+  }
+  @keyframes starscroll { from { background-position: 0 0; } to { background-position: -200px 0; } }
+
+  body.space .subtitle,
+  body.space .mute-row button { color: #aebfe0; }
+  body.space .problem { color: #eaf2ff; }
+  body.space .answer-box { background: #0e1c39; border-color: #33518a; color: #eaf2ff; }
+  body.space .answer-box.empty { color: #5f76a6; }
+  body.space .answer-box.reveal { border-color: var(--green); color: #9df0af; }
+  body.space .key { background: #16264a; color: #eaf2ff; box-shadow: 0 4px 0 #0a1428; }
+  body.space .key.clear, body.space .key.back { color: #ff9ec4; }
+  body.space .key.enter { background: var(--green); color: #fff; box-shadow: 0 4px 0 var(--green-deep); }
+  body.space .mode-btn { background: #13233f; color: #9ecbff; border-color: #33518a; }
+  body.space .mode-btn.active { background: var(--pink); color: #fff; border-color: var(--pink); }
+  body.space .round { background: #13233f; border-color: #33518a; }
+  body.space .timer-track { background: #16264a; }
+  /* Space toggle button when active */
+  .round.space-on { background: var(--pink); border-color: var(--pink); box-shadow: 0 0 10px rgba(255,111,165,0.7); }
+
+  /* Rocket animations */
+  @keyframes rocketbob { 0%,100% { transform: translate(-4px,-3px); } 50% { transform: translate(4px,4px); } }
+  .rocket-bob { animation: rocketbob 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes rocketdodge { 0% { transform: translateY(0); } 30% { transform: translateY(36px); } 70% { transform: translateY(36px); } 100% { transform: translateY(0); } }
+  .rocket-dodge { animation: rocketdodge 1.1s ease; transform-box: fill-box; transform-origin: center; }
+  @keyframes rockethit { 0%,100% { transform: translate(0,0); } 20% { transform: translate(-7px,3px); } 40% { transform: translate(7px,-3px); } 60% { transform: translate(-6px,2px); } 80% { transform: translate(6px,-2px); } }
+  .rocket-hit { animation: rockethit 0.5s ease; transform-box: fill-box; transform-origin: center; }
+  @keyframes rocketdefeat { 0% { transform: translate(0,0) rotate(0deg); opacity: 1; } 100% { transform: translate(-24px,44px) rotate(-28deg); opacity: 0.45; } }
+  .rocket-defeat { animation: rocketdefeat 1s ease forwards; transform-box: fill-box; transform-origin: center; }
 </style>
 </head>
 <body>
   <div class="topbar">
     <button class="round" id="historyBtn" title="History" aria-label="History">📜</button>
+    <button class="round" id="spaceBtn" title="Space mode" aria-label="Space mode">🚀</button>
     <div class="modes" id="modes">
       <button class="mode-btn active" data-mode="add">➕ Add</button>
       <button class="mode-btn" data-mode="sub">➖ Sub</button>
@@ -454,11 +528,14 @@
     <div class="timer-text" id="timerText">⏱ 15</div>
   </div>
 
+  <div class="hearts" id="hearts"></div>
+
   <div class="stage">
     <div class="kitten-stage" id="kittenStage"></div>
     <div class="problem" id="problem"></div>
     <div class="answer-box empty" id="answerBox">?</div>
     <div class="message" id="message"></div>
+    <button class="tryagain-btn" id="tryAgainBtn">🚀 Try Again</button>
   </div>
 
   <div class="mute-row">
@@ -620,6 +697,11 @@
   var tries = 0;              // wrong attempts on the current problem
   var soundOn = true;
 
+  // Space mode state
+  var spaceMode = false;
+  var lives = 3;
+  var gameOver = false;
+
   // Timer state
   var timedThisProblem = false;
   var problemShownAt = 0;
@@ -644,6 +726,9 @@
   var historyOverlay = document.getElementById("historyOverlay");
   var historyList = document.getElementById("historyList");
   var historyStats = document.getElementById("historyStats");
+  var spaceBtn    = document.getElementById("spaceBtn");
+  var heartsEl    = document.getElementById("hearts");
+  var tryAgainBtn = document.getElementById("tryAgainBtn");
 
   // ---------- Sound ----------
   var audioCtx = null;
@@ -680,6 +765,24 @@
     tone(155.56, 0.16, 0.30, "square", 0.18);
   }
   function unlockAudio() { var c = ctx(); if (c && c.state === "suspended") c.resume(); }
+  // Space sound effects
+  function sfxLaser() {
+    if (!soundOn) return;
+    tone(880, 0.00, 0.08, "square", 0.16);
+    tone(1320, 0.05, 0.09, "square", 0.13);
+  }
+  function sfxHit() {
+    if (!soundOn) return;
+    tone(150, 0.00, 0.18, "square", 0.22);
+    tone(90, 0.06, 0.24, "square", 0.20);
+  }
+  function sfxDefeat() {
+    if (!soundOn) return;
+    tone(392, 0.00, 0.26, "sawtooth", 0.20);
+    tone(330, 0.24, 0.28, "sawtooth", 0.20);
+    tone(262, 0.50, 0.32, "sawtooth", 0.20);
+    tone(196, 0.80, 0.55, "sawtooth", 0.22);
+  }
 
   // ---------- Kitten SVGs ----------
   // Inner markup of the happy cat face (no <svg> wrapper) so celebrations can reuse it.
@@ -812,6 +915,76 @@
     else stageEl.innerHTML = kittenIdle();
   }
 
+  // ---------- Space mode: rocket scenes ----------
+  function starTwinkle() {
+    var pts = [[24,34,1.4],[150,40,1.2],[178,120,1.6],[38,150,1.2],[120,172,1],[74,24,1]];
+    var s = "";
+    for (var i = 0; i < pts.length; i++) {
+      s += '<circle cx="' + pts[i][0] + '" cy="' + pts[i][1] + '" r="' + pts[i][2] + '" fill="#fff">' +
+             '<animate attributeName="opacity" values="0.3;1;0.3" dur="' + (1.5 + i * 0.3) + 's" repeatCount="indefinite"/></circle>';
+    }
+    return s;
+  }
+  // Horizontal rocket, nose pointing right, cat pilot in the window.
+  function rocketBody(cat) {
+    return '' +
+      // flame trailing left (flickers)
+      '<path d="M62 91 L30 100 L62 109 Z" fill="#ff9a3d"><animate attributeName="d" values="M62 91 L30 100 L62 109 Z;M62 93 L18 100 L62 107 Z;M62 91 L30 100 L62 109 Z" dur="0.2s" repeatCount="indefinite"/></path>' +
+      '<path d="M62 95 L44 100 L62 105 Z" fill="#ffd54a"/>' +
+      // fins
+      '<path d="M78 82 L64 64 L96 80 Z" fill="#ff6fa5"/>' +
+      '<path d="M78 118 L64 136 L96 120 Z" fill="#ff6fa5"/>' +
+      // body
+      '<rect x="62" y="80" width="74" height="40" rx="20" fill="#eef3fb"/>' +
+      '<rect x="62" y="96" width="74" height="8" fill="#d3ddee"/>' +
+      // nose cone
+      '<path d="M134 82 L170 100 L134 118 Z" fill="#ff6fa5"/>' +
+      // window with cat pilot
+      '<circle cx="96" cy="100" r="16" fill="#8fd0ff" stroke="#fff" stroke-width="3"/>' +
+      '<text x="96" y="108" font-size="22" text-anchor="middle">' + cat + '</text>';
+  }
+  function svgWrap(inner) {
+    return '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="pop">' + inner + '</svg>';
+  }
+  function rocketIdle() {
+    return svgWrap(starTwinkle() + '<g class="rocket-bob">' + rocketBody("😺") + '</g>');
+  }
+  function rocketLaser() {
+    return svgWrap(starTwinkle() +
+      '<g class="rocket-bob">' + rocketBody("😼") + '</g>' +
+      '<rect x="170" y="97" width="0" height="6" rx="3" fill="#ff3b6b"><animate attributeName="width" values="0;20;20;0" keyTimes="0;0.3;0.6;1" dur="0.9s" fill="freeze"/></rect>' +
+      '<text x="192" y="108" font-size="24" text-anchor="middle">☄️<animate attributeName="opacity" values="1;1;0" keyTimes="0;0.5;0.65" dur="0.9s" fill="freeze"/></text>' +
+      '<text x="192" y="110" font-size="30" text-anchor="middle" opacity="0">💥<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.55;0.65;0.85;1" dur="1.2s" fill="freeze"/></text>');
+  }
+  function rocketDodge() {
+    return svgWrap(starTwinkle() +
+      '<text x="0" y="76" font-size="24" text-anchor="middle">☄️<animateTransform attributeName="transform" type="translate" values="210 0;-30 0" dur="1s" fill="freeze"/></text>' +
+      '<g class="rocket-dodge">' + rocketBody("😺") + '</g>');
+  }
+  function rocketHit() {
+    return svgWrap(starTwinkle() +
+      '<text x="0" y="100" font-size="24" text-anchor="middle">☄️<animateTransform attributeName="transform" type="translate" values="200 0;44 0" dur="0.4s" fill="freeze"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;0.85;1" dur="0.5s" fill="freeze"/></text>' +
+      '<g class="rocket-hit">' + rocketBody("🙀") + '</g>' +
+      '<text x="120" y="112" font-size="34" text-anchor="middle" opacity="0">💥<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.35;0.8;1" dur="0.9s" fill="freeze"/></text>');
+  }
+  function rocketDefeat() {
+    return svgWrap(starTwinkle() +
+      '<g class="rocket-defeat">' + rocketBody("😿") + '</g>' +
+      '<text x="104" y="116" font-size="48" text-anchor="middle">💥</text>');
+  }
+  function renderIdleActor() {
+    stageEl.innerHTML = spaceMode ? rocketIdle() : kittenIdle();
+  }
+  function renderHearts() {
+    var h = "";
+    for (var i = 0; i < 3; i++) h += (i < lives) ? "❤️" : "🖤";
+    heartsEl.textContent = h;
+  }
+  function showTryAgain(on) {
+    if (on) tryAgainBtn.classList.add("show");
+    else tryAgainBtn.classList.remove("show");
+  }
+
   // ---------- Problems ----------
   function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
@@ -897,7 +1070,8 @@
     renderEntry();
     messageEl.textContent = "";
     messageEl.className = "message";
-    showKitten("idle");
+    showTryAgain(false);
+    renderIdleActor();
     // Always stamp the start time so we can measure how long each answer takes.
     problemShownAt = Date.now();
     // Timed mode: start the visible countdown, except on the very first problem of a session.
@@ -955,15 +1129,17 @@
     setTimeout(function () { answerEl.classList.remove("shake"); }, 400);
   }
   function pressDigit(d) {
-    if (locked || awaitingNext) return;
+    if (locked || awaitingNext || gameOver) return;
     if (entry.length >= 3) return;
     if (entry === "0") entry = "";   // lone "0" is valid, but no leading zeros like "07"
     entry += d;
     renderEntry();
   }
-  function pressBack() { if (locked || awaitingNext) return; entry = entry.slice(0, -1); renderEntry(); }
-  function pressClear() { if (locked || awaitingNext) return; entry = ""; renderEntry(); }
+  function pressBack() { if (locked || awaitingNext || gameOver) return; entry = entry.slice(0, -1); renderEntry(); }
+  function pressClear() { if (locked || awaitingNext || gameOver) return; entry = ""; renderEntry(); }
   function submit() {
+    // Space mode: after a defeat, Enter (or Try Again) starts a new run.
+    if (gameOver) { restartSpace(); return; }
     // After a timeout, Enter just moves on to the next problem.
     if (awaitingNext) { newProblem(false); return; }
     if (locked) return;
@@ -975,23 +1151,81 @@
       var ms = Date.now() - problemShownAt;
       addHistory("right", val, ms);
       locked = true;
-      stageEl.innerHTML = celebrate();
-      chimeCorrect();
-      messageEl.textContent = (ms != null) ? ("Purrfect! 🎉 " + (ms / 1000).toFixed(1) + "s") : "Purrfect! 🎉";
+      if (spaceMode) {
+        var useLaser = Math.random() < 0.5;
+        stageEl.innerHTML = useLaser ? rocketLaser() : rocketDodge();
+        chimeCorrect();
+        if (useLaser) sfxLaser();
+        messageEl.textContent = useLaser ? "💥 Asteroid destroyed!" : "🚀 Nice dodge!";
+      } else {
+        stageEl.innerHTML = celebrate();
+        chimeCorrect();
+        messageEl.textContent = timedThisProblem ? ("Purrfect! 🎉 " + (ms / 1000).toFixed(1) + "s") : "Purrfect! 🎉";
+      }
       messageEl.className = "message correct";
       setTimeout(function () { newProblem(false); }, 1400);
     } else {
-      // Wrong — logged as a response; in timed mode the clock keeps running so they can retry.
+      // Wrong — logged as a response.
       tries++;
       addHistory("wrong", val, Date.now() - problemShownAt);
-      showKitten("sad");
-      buzzWrong();
-      messageEl.textContent = "Oops! Try again 💧";
-      messageEl.className = "message wrong";
-      shakeAnswer();
-      entry = "";
-      renderEntry();
+      if (spaceMode) {
+        lives--;
+        renderHearts();
+        stageEl.innerHTML = rocketHit();
+        sfxHit();
+        if (lives <= 0) {
+          // Defeat
+          gameOver = true;
+          resolved = true;
+          stopTimer();
+          setTimeout(function () {
+            stageEl.innerHTML = rocketDefeat();
+            sfxDefeat();
+          }, 500);
+          messageEl.textContent = "💥 Game over! Out of hearts.";
+          messageEl.className = "message wrong";
+          showTryAgain(true);
+        } else {
+          messageEl.textContent = "💥 Ouch! " + lives + (lives === 1 ? " heart" : " hearts") + " left — try again";
+          messageEl.className = "message wrong";
+          shakeAnswer();
+          entry = "";
+          renderEntry();
+        }
+      } else {
+        showKitten("sad");
+        buzzWrong();
+        messageEl.textContent = "Oops! Try again 💧";
+        messageEl.className = "message wrong";
+        shakeAnswer();
+        entry = "";
+        renderEntry();
+      }
     }
+  }
+
+  // ---------- Space mode control ----------
+  function toggleSpace() {
+    spaceMode = !spaceMode;
+    document.body.classList.toggle("space", spaceMode);
+    spaceBtn.classList.toggle("space-on", spaceMode);
+    lives = 3;
+    gameOver = false;
+    renderHearts();
+    showTryAgain(false);
+    newProblem(true);
+  }
+  function restartSpace() {
+    lives = 3;
+    gameOver = false;
+    renderHearts();
+    showTryAgain(false);
+    newProblem(true);
+  }
+  // Start a fresh problem, resetting a dead space game if needed (used by mode/settings changes).
+  function startFreshProblem() {
+    if (gameOver) { lives = 3; gameOver = false; renderHearts(); showTryAgain(false); }
+    newProblem(true);
   }
 
   // ---------- History ----------
@@ -1144,7 +1378,7 @@
     settings.seconds = clampSeconds(parseInt(secondsInput.value, 10));
     saveSettings();
     overlayEl.classList.remove("open");
-    newProblem(true); // fresh start — first problem after settings is untimed
+    startFreshProblem(); // fresh start — first problem after settings is untimed
   }
 
   // Prevent unchecking the very last table
@@ -1183,8 +1417,11 @@
     var all = document.querySelectorAll(".mode-btn");
     for (var i = 0; i < all.length; i++) all[i].classList.remove("active");
     btn.classList.add("active");
-    newProblem(true); // switching modes starts fresh — first problem untimed
+    startFreshProblem(); // switching modes starts fresh — first problem untimed
   });
+
+  spaceBtn.addEventListener("click", function () { unlockAudio(); toggleSpace(); });
+  tryAgainBtn.addEventListener("click", function () { unlockAudio(); restartSpace(); });
 
   document.getElementById("gearBtn").addEventListener("click", function () { unlockAudio(); openSettings(); });
   document.getElementById("doneBtn").addEventListener("click", closeSettings);

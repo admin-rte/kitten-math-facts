@@ -51,6 +51,18 @@ Screen**. It launches full-screen like a native app.
   treat, chases a mouse, wears a mouse on its head, or throws a mini party.
 - 🔊 Sound can be toggled off.
 
+### 🚀 Space mode (optional)
+
+Tap the **🚀** button to blast off into a dark, star-studded theme. The kitten
+becomes a rocket pilot flying through space with **three hearts**:
+- ✅ **Correct** → the pilot dodges an incoming asteroid or blasts it with lasers.
+- ❌ **Wrong** → the rocket collides and loses a heart.
+- 💥 Lose all three hearts and it's **game over** (with a defeat sound) — tap
+  **Try Again** to start a fresh run with full hearts.
+
+Space mode layers on top of whichever math mode you've picked, so you can practice
+addition, times tables, or anything else while flying.
+
 ### ⏱ Timed mode (optional, off by default)
 - A countdown bar races you to answer (default 15 seconds, adjustable 3–60).
 - The **first problem of a session is never timed** — a gentle warm-up.
