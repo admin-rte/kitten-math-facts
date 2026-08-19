@@ -424,6 +424,16 @@
     box-shadow: 0 4px 0 var(--green-deep);
   }
   .done-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-deep); }
+
+  .about {
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.7;
+    opacity: 0.8;
+    padding: 4px 0 2px;
+  }
+  .about .about-title { font-size: 15px; font-weight: bold; color: var(--pink-deep); opacity: 1; }
+  .about a { color: var(--pink-deep); }
 </style>
 </head>
 <body>
@@ -498,6 +508,14 @@
       <div class="limit-row" style="margin-top:12px;">
         <span class="limit-hint">Seconds per problem:</span>
         <input id="secondsInput" type="number" inputmode="numeric" min="3" max="60" step="1">
+      </div>
+
+      <div class="field-label">About</div>
+      <div class="about">
+        <div class="about-title">🐱 Kitten Math Facts</div>
+        <div>© 2026 Paul Mason</div>
+        <div>Licensed under the MIT License</div>
+        <div><a href="mailto:paulrmason@gmail.com">paulrmason@gmail.com</a></div>
       </div>
 
       <button class="done-btn" id="doneBtn">Done</button>
