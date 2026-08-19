@@ -100,5 +100,12 @@ Open with the **⚙️** button (top-right).
 - `kitten-math-facts-mobile.html` — full-featured version
 - `kitten-math-facts.html` — original simple desktop version
 - `README.md` — this file
+- `LICENSE` — MIT License
 
 Contributions/changes are tracked with git for progress and backups.
+
+---
+
+## 📄 License
+
+Released under the [MIT License](LICENSE) — free to use, modify, and share.
